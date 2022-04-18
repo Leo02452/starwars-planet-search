@@ -2,7 +2,13 @@ import React, { useContext, useEffect } from 'react';
 import apiContext from '../contexts/ApiContext';
 
 function Table() {
-  const { data, requestApiSW, search, filter } = useContext(apiContext);
+  const {
+    data,
+    requestApiSW,
+    filterByName,
+    filterByNumericValues,
+    activeFilter,
+  } = useContext(apiContext);
 
   useEffect(() => {
     requestApiSW();
@@ -28,37 +34,61 @@ function Table() {
         </tr>
       )));
 
+  const switchCase = (object, array) => {
+    let comparisons;
+    switch (array.comparison) {
+    case 'maior que':
+      comparisons = +object[array.column] > +array.value;
+      break;
+    case 'menor que':
+      comparisons = +object[array.column] < +array.value;
+      break;
+    case 'igual a':
+      comparisons = +object[array.column] === +array.value;
+      break;
+    default:
+      break;
+    }
+    return comparisons;
+  };
+
+  const reduceFilter = (array) => {
+    const filteredByOptions = array
+      .reduce((acc, curr) => {
+        let arrayReduced = [];
+        filterByNumericValues.forEach((filter, index) => {
+          const comparisons = switchCase(curr, filter);
+          if (index !== 0) {
+            if (arrayReduced.includes(curr)) {
+              if (comparisons) {
+                arrayReduced = acc.concat(curr);
+              } else {
+                arrayReduced = acc;
+              }
+            }
+          } else if (comparisons) {
+            arrayReduced = acc.concat(curr);
+          } else {
+            arrayReduced = acc;
+          }
+        });
+        return arrayReduced;
+      }, []);
+    return mapAndRenderPlanets(filteredByOptions);
+  };
+
   const filteredPlanets = (array) => {
-    const isNamedFilterDesactivated = (search.filterByName.name === '');
-    const isFilterActivated = filter.filterByNumericValues[0].filterActivated;
-    if (!isNamedFilterDesactivated) {
+    const isNameFilterDesactivated = (filterByName.name === '');
+    if (!isNameFilterDesactivated) {
       const filteredByName = array
         .filter((planet) => planet.name.toLowerCase()
-          .includes(search.filterByName.name.toLowerCase()));
+          .includes(filterByName.name.toLowerCase()));
       return mapAndRenderPlanets(filteredByName);
-    } if (isFilterActivated) {
-      const { comparison, column, value } = filter.filterByNumericValues[0];
-      let filteredByOptions;
-
-      switch (comparison) {
-      case 'maior que':
-        filteredByOptions = array
-          .filter((planet) => +planet[column] > +value);
-        return mapAndRenderPlanets(filteredByOptions);
-      case 'menor que':
-        filteredByOptions = array
-          .filter((planet) => +planet[column] < +value);
-        return mapAndRenderPlanets(filteredByOptions);
-      case 'igual a':
-        filteredByOptions = array
-          .filter((planet) => +planet[column] === +value);
-        return mapAndRenderPlanets(filteredByOptions);
-      default:
-        return null;
-      }
-    } else {
-      return mapAndRenderPlanets(array);
     }
+    if (activeFilter.activated) {
+      return reduceFilter(array);
+    }
+    return mapAndRenderPlanets(array);
   };
 
   return (

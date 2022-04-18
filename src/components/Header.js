@@ -2,12 +2,11 @@ import React, { useContext, useState } from 'react';
 import ApiContext from '../contexts/ApiContext';
 
 function Header() {
-  const { handleInputChange, search, handleFilter } = useContext(ApiContext);
+  const { handleInputChange, filterByName, handleFilter } = useContext(ApiContext);
   const [filterInput, setFilterInput] = useState({
     column: 'population',
     comparison: 'maior que',
     value: 0,
-    filterActivated: true,
   });
 
   const handleChange = ({ target }) => {
@@ -23,7 +22,7 @@ function Header() {
       <input
         data-testid="name-filter"
         onChange={ handleInputChange }
-        value={ search.filterByName.name }
+        value={ filterByName.name }
       />
       <label htmlFor="column">
         Column
@@ -31,6 +30,7 @@ function Header() {
           data-testid="column-filter"
           name="column"
           id="column"
+          value={ filterInput.column }
           onChange={ handleChange }
         >
           <option>population</option>
@@ -45,6 +45,7 @@ function Header() {
           data-testid="comparison-filter"
           name="comparison"
           id="comparison"
+          value={ filterInput.comparison }
           onChange={ handleChange }
         >
           <option>maior que</option>

@@ -1,45 +1,31 @@
 import React, { useState } from 'react';
 import { object } from 'prop-types';
 import ApiContext from './ApiContext';
-import { results } from '../testData';
+// import { results } from '../testData';
 
 function ApiProvider(props) {
   const [data, setData] = useState([]);
-  const [search, setSearch] = useState({ filterByName: { name: '' } });
-  const [filter, setFilter] = useState({
-    filterByNumericValues: [
-      {
-        column: '',
-        comparison: '',
-        value: '',
-        filterActivated: false,
-      },
-    ],
-  });
+  const [filterByName, setFilterByName] = useState({ name: '' });
+  const [filterByNumericValues, setFilterByNumericValues] = useState([]);
+  const [activeFilter, setActiveFilter] = useState({ activated: false });
 
-  // const requestApiSW = async () => {
-  //   const response = await fetch('https://swapi-trybe.herokuapp.com/api/planets/');
-  //   const result = await response.json();
-  //   setData(result.results);
-  // };
-
-  const requestApiSW = () => {
+  const requestApiSW = async () => {
+    const response = await fetch('https://swapi-trybe.herokuapp.com/api/planets/');
+    const { results } = await response.json();
     setData(results);
   };
 
+  // const requestApiSW = () => {
+  //   setData(results);
+  // };
+
   const handleInputChange = ({ target }) => {
-    setSearch({ filterByName: { name: target.value } });
+    setFilterByName({ name: target.value });
   };
 
   const handleFilter = (filterObject) => {
-    setFilter({
-      filterByNumericValues: [
-        {
-          ...filter.filterByNumericValues[0],
-          ...filterObject,
-        },
-      ],
-    });
+    setFilterByNumericValues([...filterByNumericValues, filterObject]);
+    setActiveFilter({ activated: true });
   };
 
   const { Provider } = ApiContext;
@@ -50,10 +36,11 @@ function ApiProvider(props) {
       value={ {
         data,
         requestApiSW,
-        search,
+        filterByName,
         handleInputChange,
-        filter,
+        filterByNumericValues,
         handleFilter,
+        activeFilter,
       } }
     >
       {children}
