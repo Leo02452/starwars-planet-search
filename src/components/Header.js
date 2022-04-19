@@ -7,6 +7,8 @@ function Header() {
     filterByName,
     handleFilter,
     filterByNumericValues,
+    deleteFilter,
+    deleteAllFilters,
   } = useContext(ApiContext);
 
   const [filterInput, setFilterInput] = useState({
@@ -49,7 +51,6 @@ function Header() {
 
   const reduceColumnOptions = () => {
     const reducedArray = columns.reduce((acc, curr) => {
-      console.log(filterByNumericValues);
       if (filterByNumericValues.length === 0) {
         return acc.concat(curr);
       }
@@ -105,6 +106,27 @@ function Header() {
         onClick={ () => handleFilter(filterInput) }
       >
         Filtrar
+      </button>
+      <div>
+        { filterByNumericValues.length > 0
+          && filterByNumericValues.map(({ column, comparison, value }, index) => (
+            <div key={ index } data-testid="filter">
+              <span>{ `${column} ${comparison} ${value} ` }</span>
+              <button
+                type="button"
+                onClick={ () => deleteFilter(column) }
+              >
+                X
+              </button>
+            </div>
+          ))}
+      </div>
+      <button
+        type="button"
+        data-testid="button-remove-filters"
+        onClick={ () => deleteAllFilters() }
+      >
+        Remover todas filtragens
       </button>
     </header>
   );

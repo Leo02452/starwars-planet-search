@@ -7,7 +7,6 @@ function Table() {
     requestApiSW,
     filterByName,
     filterByNumericValues,
-    activeFilter,
   } = useContext(apiContext);
 
   useEffect(() => {
@@ -85,7 +84,7 @@ function Table() {
           .includes(filterByName.name.toLowerCase()));
       return mapAndRenderPlanets(filteredByName);
     }
-    if (activeFilter.activated) {
+    if (filterByNumericValues.length > 0) {
       return reduceFilter(array);
     }
     return mapAndRenderPlanets(array);

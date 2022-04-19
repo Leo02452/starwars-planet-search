@@ -7,7 +7,6 @@ function ApiProvider(props) {
   const [data, setData] = useState([]);
   const [filterByName, setFilterByName] = useState({ name: '' });
   const [filterByNumericValues, setFilterByNumericValues] = useState([]);
-  const [activeFilter, setActiveFilter] = useState({ activated: false });
 
   const requestApiSW = async () => {
     const response = await fetch('https://swapi-trybe.herokuapp.com/api/planets/');
@@ -25,7 +24,16 @@ function ApiProvider(props) {
 
   const handleFilter = (filterObject) => {
     setFilterByNumericValues([...filterByNumericValues, filterObject]);
-    setActiveFilter({ activated: true });
+  };
+
+  const deleteFilter = (filterColumn) => {
+    const newFilter = filterByNumericValues
+      .filter((filter) => filter.column !== filterColumn);
+    setFilterByNumericValues([...newFilter]);
+  };
+
+  const deleteAllFilters = () => {
+    setFilterByNumericValues([]);
   };
 
   const { Provider } = ApiContext;
@@ -40,7 +48,8 @@ function ApiProvider(props) {
         handleInputChange,
         filterByNumericValues,
         handleFilter,
-        activeFilter,
+        deleteFilter,
+        deleteAllFilters,
       } }
     >
       {children}
