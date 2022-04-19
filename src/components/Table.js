@@ -12,7 +12,7 @@ function Table() {
 
   useEffect(() => {
     requestApiSW();
-  }, [requestApiSW]);
+  }, []);
 
   const mapAndRenderPlanets = (array) => (
     array
