@@ -1,23 +1,19 @@
-import React, { useContext, useEffect } from 'react';
+import React, { useContext } from 'react';
 import apiContext from '../contexts/ApiContext';
 
 function Table() {
   const {
     data,
-    requestApiSW,
     filterByName,
     filterByNumericValues,
+    order,
   } = useContext(apiContext);
-
-  useEffect(() => {
-    requestApiSW();
-  }, []);
 
   const mapAndRenderPlanets = (array) => (
     array
       .map((planet, index) => (
         <tr key={ index }>
-          <td>{ planet.name }</td>
+          <td data-testid="planet-name">{ planet.name }</td>
           <td>{ planet.rotation_period }</td>
           <td>{ planet.orbital_period }</td>
           <td>{ planet.diameter }</td>
@@ -73,7 +69,7 @@ function Table() {
         });
         return arrayReduced;
       }, []);
-    return mapAndRenderPlanets(filteredByOptions);
+    return filteredByOptions;
   };
 
   const filteredPlanets = (array) => {
@@ -82,12 +78,48 @@ function Table() {
       const filteredByName = array
         .filter((planet) => planet.name.toLowerCase()
           .includes(filterByName.name.toLowerCase()));
-      return mapAndRenderPlanets(filteredByName);
+      return filteredByName;
     }
     if (filterByNumericValues.length > 0) {
       return reduceFilter(array);
     }
-    return mapAndRenderPlanets(array);
+    return array;
+  };
+
+  const defaultSort = () => {
+    const ascendentOrder = -1;
+    const defaultNameSort = filteredPlanets(data).sort((a, b) => {
+      if (a.name > b.name) {
+        return 1;
+      }
+      if (a.name < b.name) {
+        return ascendentOrder;
+      }
+      return 0;
+    });
+    return defaultNameSort;
+  };
+
+  const sortPlanets = () => {
+    if (Object.keys(order).length === 0) {
+      return mapAndRenderPlanets(defaultSort());
+    }
+
+    const sortedPlanets = filteredPlanets(data).sort((a, b) => {
+      const ascendentOrder = -1;
+      if (Number.isNaN(+a[order.column] - +b[order.column])) {
+        return a[order.column] > b[order.column] ? 1 : ascendentOrder;
+      }
+      switch (order.sort) {
+      case 'ASC':
+        return +a[order.column] - +b[order.column];
+      case 'DESC':
+        return b[order.column] - a[order.column];
+      default:
+        return null;
+      }
+    });
+    return mapAndRenderPlanets(sortedPlanets);
   };
 
   return (
@@ -110,7 +142,7 @@ function Table() {
         </tr>
       </thead>
       <tbody>
-        { filteredPlanets(data) }
+        { sortPlanets() }
       </tbody>
     </table>
   );

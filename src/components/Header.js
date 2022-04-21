@@ -9,6 +9,7 @@ function Header() {
     filterByNumericValues,
     deleteFilter,
     deleteAllFilters,
+    handleSort,
   } = useContext(ApiContext);
 
   const [filterInput, setFilterInput] = useState({
@@ -25,6 +26,19 @@ function Header() {
     });
   };
 
+  const [sortFilter, setsortFilter] = useState({
+    column: 'population',
+    sort: 'ASC',
+  });
+
+  const handleSortFilter = ({ target }) => {
+    const { name, value } = target;
+    setsortFilter({
+      ...sortFilter,
+      [name]: value,
+    });
+  };
+
   const columns = [
     'population',
     'orbital_period',
@@ -33,29 +47,10 @@ function Header() {
     'surface_water',
   ];
 
-  const verifyRepeatedColumn = (acc, curr) => {
-    let filtersAvailables;
-    filterByNumericValues.forEach((filter, index) => {
-      if (index !== 0) {
-        if (filtersAvailables.includes(curr)) {
-          filtersAvailables = curr === filter.column ? acc : acc.concat(curr);
-        } else {
-          filtersAvailables = acc;
-        }
-      } else {
-        filtersAvailables = curr === filter.column ? acc : acc.concat(curr);
-      }
-    });
-    return filtersAvailables;
-  };
-
   const reduceColumnOptions = () => {
-    const reducedArray = columns.reduce((acc, curr) => {
-      if (filterByNumericValues.length === 0) {
-        return acc.concat(curr);
-      }
-      return verifyRepeatedColumn(acc, curr);
-    }, []);
+    const filterColumns = filterByNumericValues.map((filter) => Object.values(filter)[0]);
+    const reducedArray = columns.reduce((array, column) => (filterColumns
+      .includes(column) ? array : array.concat(column)), []);
     return reducedArray;
   };
 
@@ -127,6 +122,48 @@ function Header() {
         onClick={ () => deleteAllFilters() }
       >
         Remover todas filtragens
+      </button>
+      <label htmlFor="column-sort">
+        Column
+        <select
+          data-testid="column-sort"
+          name="column"
+          id="column-sort"
+          onChange={ handleSortFilter }
+        >
+          { columns.map((column, index) => (
+            <option key={ index } value={ column }>{column}</option>
+          )) }
+        </select>
+      </label>
+      <label htmlFor="ASC">
+        Ascendente
+        <input
+          type="radio"
+          data-testid="column-sort-input-asc"
+          id="ASC"
+          value="ASC"
+          name="sort"
+          onChange={ handleSortFilter }
+        />
+      </label>
+      <label htmlFor="DESC">
+        Descendente
+        <input
+          type="radio"
+          data-testid="column-sort-input-desc"
+          id="DESC"
+          value="DESC"
+          name="sort"
+          onChange={ handleSortFilter }
+        />
+      </label>
+      <button
+        type="button"
+        data-testid="column-sort-button"
+        onClick={ () => handleSort(sortFilter) }
+      >
+        Ordenar
       </button>
     </header>
   );

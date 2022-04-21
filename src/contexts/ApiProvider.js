@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { object } from 'prop-types';
 import ApiContext from './ApiContext';
 // import { results } from '../testData';
@@ -7,12 +7,16 @@ function ApiProvider(props) {
   const [data, setData] = useState([]);
   const [filterByName, setFilterByName] = useState({ name: '' });
   const [filterByNumericValues, setFilterByNumericValues] = useState([]);
+  const [order, setOrder] = useState({});
 
-  const requestApiSW = async () => {
-    const response = await fetch('https://swapi-trybe.herokuapp.com/api/planets/');
-    const { results } = await response.json();
-    setData(results);
-  };
+  useEffect(() => {
+    const requestApiSW = async () => {
+      const response = await fetch('https://swapi-trybe.herokuapp.com/api/planets/');
+      const { results } = await response.json();
+      setData(results);
+    };
+    requestApiSW();
+  }, []);
 
   // const requestApiSW = () => {
   //   setData(results);
@@ -36,6 +40,10 @@ function ApiProvider(props) {
     setFilterByNumericValues([]);
   };
 
+  const handleSort = ({ column, sort }) => {
+    setOrder({ column, sort });
+  };
+
   const { Provider } = ApiContext;
   const { children } = props;
 
@@ -43,13 +51,14 @@ function ApiProvider(props) {
     <Provider
       value={ {
         data,
-        requestApiSW,
         filterByName,
         handleInputChange,
         filterByNumericValues,
         handleFilter,
         deleteFilter,
         deleteAllFilters,
+        order,
+        handleSort,
       } }
     >
       {children}
