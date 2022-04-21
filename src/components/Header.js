@@ -1,40 +1,36 @@
 import React, { useContext, useState } from 'react';
 import PlanetsContext from '../contexts/PlanetsContext';
+import FilterName from './FilterName';
 
 function Header() {
   const {
-    handleNameFilter,
-    filterByName,
-    addNumericFilter,
     filterByNumericValues,
+    addNumericFilter,
     deleteNumericFilter,
     deleteAllNumericFilters,
     handleSort,
   } = useContext(PlanetsContext);
 
-  const [filterInput, setFilterInput] = useState({
+  const [numericFilter, setNumericFilter] = useState({
     column: 'population',
     comparison: 'maior que',
     value: 0,
   });
 
-  const handleChange = ({ target }) => {
+  const handleNumericFilter = ({ target }) => {
     const { name, value } = target;
-    setFilterInput({
-      ...filterInput,
-      [name]: value,
-    });
+    setNumericFilter({ ...numericFilter, [name]: value });
   };
 
-  const [sortFilter, setsortFilter] = useState({
+  const [sortState, setSortState] = useState({
     column: 'population',
     sort: 'ASC',
   });
 
-  const handleSortFilter = ({ target }) => {
+  const handlesortState = ({ target }) => {
     const { name, value } = target;
-    setsortFilter({
-      ...sortFilter,
+    setSortState({
+      ...sortState,
       [name]: value,
     });
   };
@@ -56,19 +52,15 @@ function Header() {
 
   return (
     <header>
-      <input
-        data-testid="name-filter"
-        onChange={ handleNameFilter }
-        value={ filterByName.name }
-      />
+      <FilterName />
       <label htmlFor="column">
         Column
         <select
           data-testid="column-filter"
           name="column"
           id="column"
-          // value={ filterInput.column }
-          onChange={ handleChange }
+          // value={ numericFilter.column }
+          onChange={ handleNumericFilter }
         >
           { reduceColumnOptions().map((column, index) => (
             <option key={ index } value={ column }>{column}</option>
@@ -80,8 +72,8 @@ function Header() {
           data-testid="comparison-filter"
           name="comparison"
           id="comparison"
-          value={ filterInput.comparison }
-          onChange={ handleChange }
+          value={ numericFilter.comparison }
+          onChange={ handleNumericFilter }
         >
           <option>maior que</option>
           <option>menor que</option>
@@ -92,13 +84,13 @@ function Header() {
         type="number"
         data-testid="value-filter"
         name="value"
-        value={ filterInput.value }
-        onChange={ handleChange }
+        value={ numericFilter.value }
+        onChange={ handleNumericFilter }
       />
       <button
         type="button"
         data-testid="button-filter"
-        onClick={ () => addNumericFilter(filterInput) }
+        onClick={ () => addNumericFilter(numericFilter) }
       >
         Filtrar
       </button>
@@ -129,7 +121,7 @@ function Header() {
           data-testid="column-sort"
           name="column"
           id="column-sort"
-          onChange={ handleSortFilter }
+          onChange={ handlesortState }
         >
           { columns.map((column, index) => (
             <option key={ index } value={ column }>{column}</option>
@@ -144,7 +136,7 @@ function Header() {
           id="ASC"
           value="ASC"
           name="sort"
-          onChange={ handleSortFilter }
+          onChange={ handlesortState }
         />
       </label>
       <label htmlFor="DESC">
@@ -155,13 +147,13 @@ function Header() {
           id="DESC"
           value="DESC"
           name="sort"
-          onChange={ handleSortFilter }
+          onChange={ handlesortState }
         />
       </label>
       <button
         type="button"
         data-testid="column-sort-button"
-        onClick={ () => handleSort(sortFilter) }
+        onClick={ () => handleSort(sortState) }
       >
         Ordenar
       </button>

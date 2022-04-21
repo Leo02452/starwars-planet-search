@@ -29,17 +29,17 @@ function Table() {
         </tr>
       )));
 
-  const switchCase = (object, array) => {
+  const switchCase = (object1, object2) => {
     let comparisons;
-    switch (array.comparison) {
+    switch (object2.comparison) {
     case 'maior que':
-      comparisons = +object[array.column] > +array.value;
+      comparisons = +object1[object2.column] > +object2.value;
       break;
     case 'menor que':
-      comparisons = +object[array.column] < +array.value;
+      comparisons = +object1[object2.column] < +object2.value;
       break;
     case 'igual a':
-      comparisons = +object[array.column] === +array.value;
+      comparisons = +object1[object2.column] === +object2.value;
       break;
     default:
       break;
@@ -107,18 +107,21 @@ function Table() {
 
     const sortedPlanets = filteredPlanets(data).sort((a, b) => {
       const ascendentOrder = -1;
-      if (Number.isNaN(+a[order.column] - +b[order.column])) {
+
+      if (Number.isNaN(a[order.column] - b[order.column])) {
         return a[order.column] > b[order.column] ? 1 : ascendentOrder;
       }
+
       switch (order.sort) {
       case 'ASC':
-        return +a[order.column] - +b[order.column];
+        return a[order.column] - b[order.column];
       case 'DESC':
         return b[order.column] - a[order.column];
       default:
         return null;
       }
     });
+
     return mapAndRenderPlanets(sortedPlanets);
   };
 
