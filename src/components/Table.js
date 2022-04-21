@@ -1,5 +1,5 @@
 import React, { useContext } from 'react';
-import apiContext from '../contexts/ApiContext';
+import PlanetsContext from '../contexts/PlanetsContext';
 
 function Table() {
   const {
@@ -7,7 +7,7 @@ function Table() {
     filterByName,
     filterByNumericValues,
     order,
-  } = useContext(apiContext);
+  } = useContext(PlanetsContext);
 
   const mapAndRenderPlanets = (array) => (
     array

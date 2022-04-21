@@ -1,42 +1,37 @@
 import React, { useState, useEffect } from 'react';
 import { object } from 'prop-types';
-import ApiContext from './ApiContext';
-// import { results } from '../testData';
+import PlanetsContext from './PlanetsContext';
 
-function ApiProvider(props) {
+function PlanetsProvider(props) {
   const [data, setData] = useState([]);
   const [filterByName, setFilterByName] = useState({ name: '' });
   const [filterByNumericValues, setFilterByNumericValues] = useState([]);
   const [order, setOrder] = useState({});
 
   useEffect(() => {
-    const requestApiSW = async () => {
+    const requestPlanetsData = async () => {
       const response = await fetch('https://swapi-trybe.herokuapp.com/api/planets/');
       const { results } = await response.json();
       setData(results);
     };
-    requestApiSW();
+    requestPlanetsData();
   }, []);
 
-  // const requestApiSW = () => {
-  //   setData(results);
-  // };
-
-  const handleInputChange = ({ target }) => {
+  const handleNameFilter = ({ target }) => {
     setFilterByName({ name: target.value });
   };
 
-  const handleFilter = (filterObject) => {
+  const addNumericFilter = (filterObject) => {
     setFilterByNumericValues([...filterByNumericValues, filterObject]);
   };
 
-  const deleteFilter = (filterColumn) => {
+  const deleteNumericFilter = (filterColumn) => {
     const newFilter = filterByNumericValues
       .filter((filter) => filter.column !== filterColumn);
-    setFilterByNumericValues([...newFilter]);
+    setFilterByNumericValues(newFilter);
   };
 
-  const deleteAllFilters = () => {
+  const deleteAllNumericFilters = () => {
     setFilterByNumericValues([]);
   };
 
@@ -44,7 +39,7 @@ function ApiProvider(props) {
     setOrder({ column, sort });
   };
 
-  const { Provider } = ApiContext;
+  const { Provider } = PlanetsContext;
   const { children } = props;
 
   return (
@@ -52,12 +47,12 @@ function ApiProvider(props) {
       value={ {
         data,
         filterByName,
-        handleInputChange,
         filterByNumericValues,
-        handleFilter,
-        deleteFilter,
-        deleteAllFilters,
         order,
+        handleNameFilter,
+        addNumericFilter,
+        deleteNumericFilter,
+        deleteAllNumericFilters,
         handleSort,
       } }
     >
@@ -66,8 +61,8 @@ function ApiProvider(props) {
   );
 }
 
-ApiProvider.propTypes = {
+PlanetsProvider.propTypes = {
   children: object,
 }.isRequired;
 
-export default ApiProvider;
+export default PlanetsProvider;

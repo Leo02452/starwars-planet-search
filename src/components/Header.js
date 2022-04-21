@@ -1,16 +1,16 @@
 import React, { useContext, useState } from 'react';
-import ApiContext from '../contexts/ApiContext';
+import PlanetsContext from '../contexts/PlanetsContext';
 
 function Header() {
   const {
-    handleInputChange,
+    handleNameFilter,
     filterByName,
-    handleFilter,
+    addNumericFilter,
     filterByNumericValues,
-    deleteFilter,
-    deleteAllFilters,
+    deleteNumericFilter,
+    deleteAllNumericFilters,
     handleSort,
-  } = useContext(ApiContext);
+  } = useContext(PlanetsContext);
 
   const [filterInput, setFilterInput] = useState({
     column: 'population',
@@ -58,7 +58,7 @@ function Header() {
     <header>
       <input
         data-testid="name-filter"
-        onChange={ handleInputChange }
+        onChange={ handleNameFilter }
         value={ filterByName.name }
       />
       <label htmlFor="column">
@@ -98,7 +98,7 @@ function Header() {
       <button
         type="button"
         data-testid="button-filter"
-        onClick={ () => handleFilter(filterInput) }
+        onClick={ () => addNumericFilter(filterInput) }
       >
         Filtrar
       </button>
@@ -109,7 +109,7 @@ function Header() {
               <span>{ `${column} ${comparison} ${value} ` }</span>
               <button
                 type="button"
-                onClick={ () => deleteFilter(column) }
+                onClick={ () => deleteNumericFilter(column) }
               >
                 X
               </button>
@@ -119,7 +119,7 @@ function Header() {
       <button
         type="button"
         data-testid="button-remove-filters"
-        onClick={ () => deleteAllFilters() }
+        onClick={ () => deleteAllNumericFilters() }
       >
         Remover todas filtragens
       </button>

@@ -1,14 +1,14 @@
 import React from 'react';
 import Header from './components/Header';
 import Table from './components/Table';
-import ApiProvider from './contexts/ApiProvider';
+import PlanetsProvider from './contexts/PlanetsProvider';
 
 function App() {
   return (
-    <ApiProvider>
+    <PlanetsProvider>
       <Header />
       <Table />
-    </ApiProvider>
+    </PlanetsProvider>
   );
 }
 
