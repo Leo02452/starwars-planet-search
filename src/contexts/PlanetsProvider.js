@@ -39,6 +39,14 @@ function PlanetsProvider(props) {
     setOrder({ column, sort });
   };
 
+  const columns = [
+    'population',
+    'orbital_period',
+    'diameter',
+    'rotation_period',
+    'surface_water',
+  ];
+
   const { Provider } = PlanetsContext;
   const { children } = props;
 
@@ -54,6 +62,7 @@ function PlanetsProvider(props) {
         deleteNumericFilter,
         deleteAllNumericFilters,
         handleSort,
+        columns,
       } }
     >
       {children}

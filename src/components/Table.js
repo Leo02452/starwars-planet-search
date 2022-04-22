@@ -100,12 +100,12 @@ function Table() {
     return defaultNameSort;
   };
 
-  const sortPlanets = () => {
+  const sortedPlanets = () => {
     if (Object.keys(order).length === 0) {
       return mapAndRenderPlanets(defaultSort());
     }
 
-    const sortedPlanets = filteredPlanets(data).sort((a, b) => {
+    const sortPlanets = filteredPlanets(data).sort((a, b) => {
       const ascendentOrder = -1;
 
       if (Number.isNaN(a[order.column] - b[order.column])) {
@@ -122,7 +122,7 @@ function Table() {
       }
     });
 
-    return mapAndRenderPlanets(sortedPlanets);
+    return mapAndRenderPlanets(sortPlanets);
   };
 
   return (
@@ -145,7 +145,7 @@ function Table() {
         </tr>
       </thead>
       <tbody>
-        { sortPlanets() }
+        { sortedPlanets() }
       </tbody>
     </table>
   );
