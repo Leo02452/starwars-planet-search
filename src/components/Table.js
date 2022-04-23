@@ -29,59 +29,37 @@ function Table() {
         </tr>
       )));
 
-  const switchCase = (object1, object2) => {
-    let comparisons;
-    switch (object2.comparison) {
-    case 'maior que':
-      comparisons = +object1[object2.column] > +object2.value;
-      break;
-    case 'menor que':
-      comparisons = +object1[object2.column] < +object2.value;
-      break;
-    case 'igual a':
-      comparisons = +object1[object2.column] === +object2.value;
-      break;
-    default:
-      break;
-    }
-    return comparisons;
-  };
-
-  const reduceFilter = (array) => {
-    const filteredByOptions = array
-      .reduce((acc, curr) => {
-        let arrayReduced = [];
-        filterByNumericValues.forEach((filter, index) => {
-          const comparisons = switchCase(curr, filter);
-          if (index !== 0) {
-            if (arrayReduced.includes(curr)) {
-              if (comparisons) {
-                arrayReduced = acc.concat(curr);
-              } else {
-                arrayReduced = acc;
-              }
-            }
-          } else if (comparisons) {
-            arrayReduced = acc.concat(curr);
-          } else {
-            arrayReduced = acc;
-          }
-        });
-        return arrayReduced;
-      }, []);
-    return filteredByOptions;
+  const reduceWithNumericFilter = (array) => {
+    const planetsForFilter = filterByNumericValues
+      .map(({ column, comparison, value }) => array.reduce((acc, planet) => {
+        switch (comparison) {
+        case 'maior que':
+          return +planet[column] > +value ? acc.concat(planet) : acc;
+        case 'menor que':
+          return +planet[column] < +value ? acc.concat(planet) : acc;
+        case 'igual a':
+          return +planet[column] === +value ? acc.concat(planet) : acc;
+        default:
+          break;
+        }
+        return acc;
+      }, []));
+    const intersection = planetsForFilter.reduce((arr1, arr2) => arr1
+      .filter((planet) => arr2.includes(planet)));
+    return intersection;
   };
 
   const filteredPlanets = (array) => {
-    const isNameFilterDesactivated = (filterByName.name === '');
-    if (!isNameFilterDesactivated) {
+    const isNameFilterActivated = filterByName.name !== '';
+    const isNumericFilterActivated = filterByNumericValues.length > 0;
+    if (isNameFilterActivated) {
       const filteredByName = array
         .filter((planet) => planet.name.toLowerCase()
           .includes(filterByName.name.toLowerCase()));
       return filteredByName;
     }
-    if (filterByNumericValues.length > 0) {
-      return reduceFilter(array);
+    if (isNumericFilterActivated) {
+      return reduceWithNumericFilter(array);
     }
     return array;
   };
